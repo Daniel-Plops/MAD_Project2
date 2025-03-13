@@ -67,4 +67,29 @@ def get_complex_grid(top_left: complex, bottom_right: complex, step: float) -> n
 
 #Reference: https://stackoverflow.com/questions/24592803/separate-real-and-imaginary-part-of-a-complex-number-in-python
 #Reference: https://saturncloud.io/blog/understanding-the-differences-between-numpy-reshape1-1-and-reshape1-1/#:~:text=When%20you%20use%20reshape(%2D,elements%20in%20your%20original%20array.
-    
+
+
+
+
+# Escape Time
+def get_escape_time_color_arr(
+        c_arr: np.ndarray,
+        max_iterations: int
+) -> np.ndarray:
+    """
+    :param c_arr: 2D array of complex numbers that represents points on the plane
+    :param max_iterations: max number of iterations to check for escape
+    :return: 2D array of escape time colors [0,1], where 0 is black (inside Mandelbrot set) and 1 is white (escaped)
+    """
+    escape_times = np.full(c_arr.shape, max_iterations + 1, dtype=float)
+
+    # Go through for every index in the grid to get complex number and the escape time
+    for ind in np.ndindex(c_arr.shape):
+        comp_num = c_arr[ind]
+        escape_time = get_escape_time(comp_num, max_iterations) # Find the escape time
+
+        if escape_time is not None:
+            escape_times[ind] = escape_time
+
+    # Formula: (num_iterations - escape_time + 1) / (num_iterations + 1)
+    return (max_iterations - escape_times + 1) / (max_iterations + 1)
