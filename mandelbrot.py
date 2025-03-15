@@ -93,3 +93,29 @@ def get_escape_time_color_arr(
 
     # Formula: (num_iterations - escape_time + 1) / (num_iterations + 1)
     return (max_iterations - escape_times + 1) / (max_iterations + 1)
+
+
+# Julia Set
+def get_julia_color_arr(
+        grid: np.ndarray,
+        c: int,
+        max_iterations: int
+) -> np.ndarray:
+    """
+    :param grid: 2D array of complex numbers that represents points on the plane
+    :param c: the point that defines the Julia set
+    :param max_iterations: max number of iterations to check for escape
+    :return: 2D array of escape time colors [0,1], where 0 is black (inside the Julia set) and 1 is white (escaped)
+    """
+    escape_times = np.full(grid.shape, max_iterations + 1, dtype=float)
+
+    for ind in np.ndindex(grid.shape):
+        z = grid[ind]
+
+        for iter in range(1, max_iterations + 1):
+            if abs(z) > 2: # escape criterion
+                escape_times[ind] = iter
+                break
+            z = z ** 2 + c
+
+    return (max_iterations - escape_times + 1) / (max_iterations + 1)
